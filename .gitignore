@@ -25,6 +25,8 @@ DerivedData
 # Android/IntelliJ
 #
 build/
+android/**/build/
+android/app/.cxx/
 .idea
 .gradle
 local.properties
@@ -73,3 +75,35 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Firebase configuration files (IMPORTANT: contains sensitive API keys)
+ios/GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+functions/.env
+functions/.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+ui-debug.log
+tmp/
+
+# OS generated files
+Thumbs.db
+
+# Accidental local artifacts
+nul
+[{]

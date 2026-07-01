@@ -1,0 +1,86 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isImage() {
+      return request.resource != null &&
+        request.resource.contentType.matches('image/.*');
+    }
+
+    function under(sizeInMb) {
+      return request.resource != null &&
+        request.resource.size < sizeInMb * 1024 * 1024;
+    }
+
+    match /galleries/{ownerId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() &&
+        request.auth.uid == ownerId &&
+        under(10) &&
+        isImage();
+    }
+
+    match /reviews/{galleryId}/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() &&
+        request.auth.uid == userId &&
+        under(5) &&
+        isImage();
+    }
+
+    match /users/{userId}/profile/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() &&
+        request.auth.uid == userId &&
+        under(5) &&
+        isImage();
+    }
+
+    match /profiles/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() &&
+        request.auth.uid == userId &&
+        under(5) &&
+        isImage();
+    }
+
+    match /portfolio/{artistId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() &&
+        request.auth.uid == artistId &&
+        under(10) &&
+        isImage();
+    }
+
+    match /artworks/{artistId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() &&
+        request.auth.uid == artistId &&
+        under(10) &&
+        isImage();
+    }
+
+    match /artist_profiles/{artistId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() &&
+        request.auth.uid == artistId &&
+        under(5) &&
+        isImage();
+    }
+
+    match /chat_images/{roomId}/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() &&
+        request.auth.uid == userId &&
+        under(10) &&
+        isImage();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,97 +1,98 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Gallering
 
-# Getting Started
+갤러리 예약, 갤러리 운영 관리, 아티스트 포트폴리오를 한 앱에서 연결하는 React Native 기반 플랫폼입니다. 일반 사용자, 갤러리 오너, 아티스트의 세 역할을 나누고 Firebase와 Gemini API를 활용해 검색, 예약, 채팅, 리뷰 흐름을 구현했습니다.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 주요 기능
 
-## Step 1: Start Metro
+- 역할별 홈/탭: 일반 사용자, 갤러리 오너, 아티스트별 화면 분기
+- 갤러리 탐색: 지역, 가격, 키워드 기반 검색과 상세 페이지
+- 예약: 사용자 예약 생성, 예약 내역 확인, 오너 예약 관리
+- 수동 예약: 갤러리 오너가 앱 외부 고객 예약을 직접 등록
+- 채팅: 사용자와 갤러리 오너, 오너와 아티스트 간 1:1 문의
+- 리뷰: 완료된 예약 기반 리뷰 작성과 갤러리 평점 반영
+- 아티스트 기능: 작품 업로드, 포트폴리오 관리, 전시 제안
+- AI 검색: Gemini API를 이용한 대화형 갤러리 조건 탐색
+- 알림: FCM/Notifee 기반 예약 및 채팅 알림 구조
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 기술 스택
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- React Native 0.80.1, React 19
+- Firebase Auth, Firestore, Storage, Cloud Messaging
+- Firebase Cloud Functions, SendGrid
+- Gemini API (`@google/generative-ai`)
+- Zustand
+- React Navigation
+- Notifee
+- react-native-image-picker
+- react-native-calendars
 
-```sh
-# Using npm
+## 실행 방법
+
+```bash
+npm install
+cp .env.example .env
+```
+
+`.env`에는 실제 키를 직접 넣습니다. 제출용 저장소나 ZIP에는 `.env`, `functions/.env`, `android/app/google-services.json`, `ios/GoogleService-Info.plist`를 포함하지 않습니다.
+
+```bash
+# Metro 실행
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
+# Android 실행
 npm run android
 
-# OR using Yarn
-yarn android
+# 테스트
+npm test -- --runInBand
+
+# 린트
+npx eslint . --quiet
+
+# Android JS 번들 검증
+npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output ./tmp/index.android.bundle --assets-dest ./tmp/assets
 ```
 
-### iOS
+## 환경 설정
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+`.env.example`
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```bash
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-Then, and every time you update your native dependencies, run:
+Firebase Android 실행에는 `android/app/google-services.json`이 필요합니다. iOS 실행에는 `ios/GoogleService-Info.plist`가 필요하지만, 현재 포트폴리오 검증 범위는 Android 기준입니다.
 
-```sh
-bundle exec pod install
-```
+Cloud Functions 이메일 발송은 `functions/.env` 또는 Firebase Functions config에 `SENDGRID_API_KEY`를 설정해 사용합니다.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## 시연 시나리오
 
-```sh
-# Using npm
-npm run ios
+1. 일반 사용자, 갤러리 오너, 아티스트 계정을 각각 생성합니다.
+2. 오너 계정으로 갤러리를 등록하고 이미지와 운영 정보를 입력합니다.
+3. 일반 사용자 계정으로 갤러리를 검색하고 상세 화면에서 예약을 생성합니다.
+4. 오너 계정으로 예약 관리 화면에서 예약 상태를 확인합니다.
+5. 오너 계정에서 수동 예약을 등록해 앱 외부 고객 예약을 관리합니다.
+6. 사용자와 오너 간 채팅방을 만들고 메시지를 주고받습니다.
+7. 완료된 예약을 기준으로 리뷰를 작성하고 갤러리 평점 변화를 확인합니다.
+8. Gemini API 키가 있을 때 AI 검색 모달에서 조건 기반 추천 흐름을 확인합니다.
 
-# OR using Yarn
-yarn ios
-```
+## 제출 전 체크리스트
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+- `.env`, `functions/.env`, Firebase 실제 설정 파일이 ZIP에 없는지 확인
+- `.git`, `.idea`, `node_modules`, `android/**/build`, `android/app/.cxx`, 로그 파일 제외
+- `npm test -- --runInBand` 통과
+- `npx eslint . --quiet` 통과
+- Android JS bundle 생성 확인
+- README의 실행 방법대로 새 폴더에서 재현 가능 여부 확인
+- API 키는 제출 전 재발급 또는 폐기
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## 스크린샷
 
-## Step 3: Modify your app
+포트폴리오 제출 시 아래 항목의 캡처 또는 짧은 시연 GIF를 함께 첨부하는 것을 권장합니다.
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- 역할 선택/회원가입
+- 갤러리 목록과 상세 화면
+- 예약 생성과 예약 내역
+- 오너 예약 관리와 수동 예약
+- 채팅 화면
+- 아티스트 포트폴리오
+- AI 갤러리 검색
